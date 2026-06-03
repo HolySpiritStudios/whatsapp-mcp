@@ -13,6 +13,7 @@ import (
 	"os/signal"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -906,7 +907,13 @@ func main() {
 	fmt.Println("\n✓ Connected to WhatsApp! Type 'help' for commands.")
 
 	// Start REST API server
-	startRESTServer(client, messageStore, 8080)
+	httpPort := 8080
+	if p := os.Getenv("WHATSAPP_HTTP_PORT"); p != "" {
+		if n, err := strconv.Atoi(p); err == nil && n > 0 {
+			httpPort = n
+		}
+	}
+	startRESTServer(client, messageStore, httpPort)
 
 	// Create a channel to keep the main goroutine alive
 	exitChan := make(chan os.Signal, 1)

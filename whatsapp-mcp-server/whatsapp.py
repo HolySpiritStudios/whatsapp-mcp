@@ -7,8 +7,16 @@ import requests
 import json
 import audio
 
-MESSAGES_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'whatsapp-bridge', 'store', 'messages.db')
-WHATSAPP_API_BASE_URL = "http://localhost:8080/api"
+_default_db = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "..",
+    "whatsapp-bridge",
+    "store",
+    "messages.db",
+)
+MESSAGES_DB_PATH = os.environ.get("WHATSAPP_STORE_DB", _default_db)
+_api_base = os.environ.get("WHATSAPP_API_BASE_URL", "http://127.0.0.1:8080/api").rstrip("/")
+WHATSAPP_API_BASE_URL = _api_base if _api_base.endswith("/api") else f"{_api_base}/api"
 
 @dataclass
 class Message:
